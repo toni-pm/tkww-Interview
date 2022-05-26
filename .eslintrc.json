@@ -1,0 +1,27 @@
+{
+    "env": {
+        "browser": true,
+		"jest": true
+    },
+    "extends": [
+		"react-app",
+		"react-app/jest"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "modules": true
+        },
+        "ecmaVersion": 2022,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "ignorePatterns": ["node_modules"],
+    "rules":{
+        "indent": [2, "tab"],
+        "no-tabs": 0,
+		"quotes": [2, "single", { "avoidEscape": true }],
+		"semi": ["error", "never"]
+    }
+}

@@ -1,42 +1,39 @@
-import React from "react";
+import React, { useState } from 'react'
+import propTypes from 'prop-types'
+import CardImage from './CardImage'
 
-class Card extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      clicked: false,
-    };
-  }
+const Card = props => {
+	const [clicked, setClicked] = useState(false)
+	const { name, image, type, brandName, price, storeName } = props.cardResults
 
-  handleClick = (e) => {
-    this.setState({
-      clicked: !this.state.clicked,
-    });
-  };
+	const handleClick = () => {
+		setClicked(!clicked)
+	}
 
-  render() {
-    const { name, image, type, brandName, price, storeName } =
-      this.props.cardResults;
-
-    return (
-      <div style={{ border: "1px solid black" }} onClick={this.handleClick}>
-        {this.state.clicked && (
-          <div>
-            <p>Price: {price}</p>
-            <p>{storeName}</p>
-          </div>
-        )}
-        <h1>{name}</h1>
-        <img
-          alt="alt"
-          src={image}
-          style={{ maxWidth: 100, maxHeight: "auto" }}
-        ></img>
-        <p>{type}</p>
-        <p>{brandName}</p>
-      </div>
-    );
-  }
+	return (
+		<div style={{ border: '1px solid black' }} onClick={handleClick}>
+			<h1>{name}</h1>
+			<CardImage className='card-image' src={image} alt={name} width={100} />
+			<p className="card-type">{type}</p>
+			<p className="card-brand">{brandName}</p>
+			{clicked && (
+				<div>
+					<p className="card-price">Price: {price} €</p>
+					<p className="card-store">{storeName}</p>
+				</div>
+			)}
+		</div>
+	)
 }
 
-export default Card;
+Card.propTypes = {
+	cardResults: propTypes.shape({
+		image: propTypes.string,
+		type: propTypes.string,
+		brandName: propTypes.string,
+		price: propTypes.number,
+		storeName: propTypes.string
+	})
+}
+
+export default Card

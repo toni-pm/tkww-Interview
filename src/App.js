@@ -1,71 +1,63 @@
-import React, { useState, useEffect } from "react";
-import API from "./api";
-import Card from "./components/Card";
+import React, { useState, useEffect } from 'react'
+import API from './services/api'
+import CardList from './components/CardList'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import Loader from './components/Loader'
 
 function App() {
-  const [products, setProducts] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [searchProduct, setProductInput] = useState("");
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState(false)
+	const [products, setProducts] = useState([])
+	const [searchInput, setSearchInput] = useState('')
+	const [searchProduct, setProductInput] = useState('')
 
-  useEffect(() => {
-    API.getProduct().then((res) => {
-      setProducts(res.data);
-    });
-  });
+	useEffect(() => {
+		const getProducts = async () => {
+			try {
+				const res = await API.getProducts()
+				setProducts(res.data)
+				setError(false)
+			} catch (e) {
+				setError(true)
+			}
+			setLoading(false)
+		}
 
-  const cardResults = [];
+		getProducts()
+	}, [])
 
-  for (let i = 0; i < products.length; i++) {
-    if (searchProduct || searchInput) {
-      if (searchProduct && products[i].type.match(searchProduct)) {
-        cardResults.push(<Card cardResults={products[i]} />);
-      }
-      if (searchInput && products[i].name.match(searchInput)) {
-        cardResults.push(<Card cardResults={products[i]} />);
-      }
-    } else {
-      cardResults.push(<Card cardResults={products[i]} />);
-    }
-  }
-
-  return (
-    <>
-      <div className="jumbotron jumbotron-fluid">
-        <div className="container">
-          <h1 className="text">Interview Header</h1>
-        </div>
-      </div>
-      <div className="container">
-        <form>
-          <label>
-            Search:
-            <input
-              type="text"
-              name="search"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </label>
-        </form>
-      </div>
-      <label for="type">Choose a product type:</label>
-      <select onChange={(e) => setProductInput(e.target.value)}>
-        <option value="RETAIL">Retail</option>
-        <option value="CASH">Cash</option>
-      </select>
-      <div className="container">
-        <h1>Results: </h1>
-        <div>{cardResults}</div>
-      </div>
-      <div style={{ marginTop: 30 }} className="footer">
-        {" "}
-        <div className="container">
-          <h1>Interview Footer </h1>
-        </div>
-        <p>Built with love</p>
-      </div>
-    </>
-  );
+	return (
+		<>
+			<Header />
+			<div className="container">
+				<form>
+					<label htmlFor="search-input">Search:</label>
+					<input
+						id="search-input"
+						type="text"
+						name="search"
+						value={searchInput}
+						onChange={e => setSearchInput(e.target.value)}
+					/>
+					<label htmlFor="search-type">Choose a product type:</label>
+					<select id="search-type" onChange={e => setProductInput(e.target.value)} defaultValue="">
+						<option value="">-</option>
+						<option value="RETAIL">Retail</option>
+						<option value="CASH">Cash</option>
+					</select>
+				</form>
+			</div>
+			<div className="container">
+				{loading
+					? <Loader />
+					: error
+						? <p>Oops! Something went wrong! :(</p>
+						: <CardList products={products} searchInput={searchInput} searchProduct={searchProduct} />}
+			</div>
+			<Footer />
+		</>
+	)
 }
 
-export default App;
+export default App
